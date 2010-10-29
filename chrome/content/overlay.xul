@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://uturgas/skin/overlay.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://uturgas/locale/overlay.dtd">
+<overlay id="uturgas-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script src="chrome://global/content/nsTransferable.js"/>
+  <script src="overlay.js"/>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="uturgas-strings" src="chrome://uturgas/locale/overlay.properties"/>
+  </stringbundleset>
+
+  <statusbar id="status-bar">
+    <statusbarpanel 
+      position="5"
+      id="uturgas-statusbar-dot" 
+      label="ut.urgas.eu uploader" 
+      onclick="alert('todo');"/>
+  </statusbar>
+</overlay>

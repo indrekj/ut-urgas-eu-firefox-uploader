@@ -1,0 +1,8 @@
+<!ENTITY uturgas.label "Your localized menuitem">
+<!ENTITY uturgasContext.label "Your Menuitem">
+<!ENTITY uturgasContext.accesskey "Y">
+<!ENTITY uturgasToolbarButton.label "Your Toolbar Button">
+<!ENTITY uturgasToolbarButton.tooltip "This is your toolbar button!">
+<!ENTITY uturgasSidebar.label "Your Sidebar">
+<!ENTITY uturgasToolbar.name  "example">
+<!ENTITY uturgasToolbar.label "This is an example toolbar. You can hide it under View &gt; toolbars &gt; &uturgasToolbar.name;">
