@@ -14,6 +14,6 @@
       position="5"
       id="uturgas-statusbar-dot" 
       label="ut.urgas.eu uploader" 
-      onclick="alert('todo');"/>
+      onclick="uturgasUploader.upload('todo');"/>
   </statusbar>
 </overlay>
