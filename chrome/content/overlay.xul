@@ -3,6 +3,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://uturgas/locale/overlay.dtd">
 <overlay id="uturgas-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script src="chrome://global/content/nsTransferable.js"/>
+  <sciprt src="chrome://global/content/viewSource.js"/>
   <script src="overlay.js"/>
 
   <stringbundleset id="stringbundleset">
@@ -14,6 +15,6 @@
       position="5"
       id="uturgas-statusbar-dot" 
       label="ut.urgas.eu uploader" 
-      onclick="uturgasUploader.upload('todo');"/>
+      onclick="uturgas.startUpload();"/>
   </statusbar>
 </overlay>

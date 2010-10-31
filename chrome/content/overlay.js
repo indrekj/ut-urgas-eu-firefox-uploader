@@ -20,7 +20,7 @@ var uturgasUrlBarListener = {
 var uturgasUploader = {
   uploadURL: "http://localhost:3000/assessments",
 
-  upload: function(content, attemptId) {
+  upload: function(file, attemptId) {
     // generate boundary string
     var boundaryString = "ut-urgas-eu-boundary-" + Math.random();
     var boundary = "--" + boundaryString;
@@ -33,7 +33,7 @@ var uturgasUploader = {
     var prefixStringInputStream = this.stringToStream(formData);
 
     // convert content to input stream
-    var contentStringInputStream = this.stringToStream(content);
+    var contentStringInputStream = this.fileToStream(file);
 
     // write out the rest of the form to another string input stream
     var suffixStringInputStream = this.stringToStream("\r\n" + boundary + "\r\n");
@@ -52,6 +52,28 @@ var uturgasUploader = {
     req.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundaryString);
     req.setRequestHeader("Content-Length", uploadStream.available());
     req.send(uploadStream);
+  },
+  
+  // from: http://www.chrisfinke.com/2010/01/30/
+  fileToStream: function(file) {
+    if (typeof file == "string") {
+      var fpLocal = Components.
+        classes['@mozilla.org/file/local;1'].
+        createInstance(Components.interfaces.nsILocalFile);
+      fpLocal.initWithFile(file);
+    } else {
+      var fpLocal = file;
+    }
+
+    var finStream = Components.
+      classes["@mozilla.org/network/file-input-stream;1"].
+      createInstance(Components.interfaces.nsIFileInputStream);
+    finStream.init(fpLocal, 1, 0, false);
+    var bufStream = Components.
+      classes["@mozilla.org/network/buffered-input-stream;1"].
+      createInstance(Components.interfaces.nsIBufferedInputStream);
+    bufStream.init(finStream, 9000000);
+    return bufStream;
   },
 
   // from: http://www.chrisfinke.com/2010/01/30/
@@ -79,6 +101,8 @@ var uturgasUploader = {
 var uturgas = {
   theDot: null,
   currentPage: null,
+  currentUri: null,
+  attemptId: null,
 
   onFirefoxLoad: function(event) {
     this.initialized = true;
@@ -94,25 +118,65 @@ var uturgas = {
   },
 
   onPageChange: function(aURI) {
+    this.currentUri = aURI;
+
     var href = aURI.spec;
-    if (href.match(/moodle\.ut\.ee.*review\.php\?q=(\d+)&attempt=(\d+)/)) {
+
+    var res = href.match(/moodle\.ut\.ee.*review\.php\?q=(\d+)&attempt=(\d+)/);
+    if (res) {
       this.currentPage = "moodle";
-    } else if (href.match(/webct\.e\-uni\.ee.*attempt=(\d+)/)) {
-      this.currentPage = "webct";
-    } else if (href.match(/webct\.e\-uni\.ee/)) {
-      // TODO: check iframe
-      this.currentPage = null;
-    } else if (href.match(/google/)) {
-      this.currentPage = "google"; // this is temporary just for testing
-    } else {
-      this.currentPage = null;
+      this.attemptId = res[2];
+      checkAttempt();
+      return;
     }
 
+    res = href.match(/webct\.e\-uni\.ee.*attempt=(\d+)/);
+    if (res) {
+      this.currentPage = "webct";
+      this.attemptId = res[1];
+      checkAttempt();
+      return;
+    }
+
+    res = href.match(/webct\.e\-uni\.ee/);
+    if (res) {
+      // TODO: check iframe ?
+      return;
+    } 
+    
+    res = href.match(/google/);
+    if (res) {
+      this.currentPage = "google"; // this is temporary just for testing
+      this.checkAttempt();
+      return;
+    }
+
+    this.currentPage = null;
+    this.attemptId = null;
+  },
+
+  checkAttempt: function() {
     if (this.currentPage) {
       this.theDot.style.color = "yellow";
     } else {
       this.theDot.style.color = "black";
     }
+  },
+
+  startUpload: function() {
+    var Cc = Components.classes;
+    var Ci = Components.interfaces;
+    var file = Cc["@mozilla.org/file/local;1"].
+      createInstance(Ci.nsILocalFile);  
+    file.initWithPath("/tmp/ut-urgas-eu-test.html");  
+    var wbp = Cc['@mozilla.org/embedding/browser/nsWebBrowserPersist;1'].
+      createInstance(Ci.nsIWebBrowserPersist);
+
+    // don't save gzipped
+    wbp.persistFlags &= ~Ci.nsIWebBrowserPersist.PERSIST_FLAGS_NO_CONVERSION;  
+    wbp.saveURI(this.currentUri, null, null, null, null, file); 
+
+    uturgasUploader.upload(file, this.attemptId);
   }
 };
 
