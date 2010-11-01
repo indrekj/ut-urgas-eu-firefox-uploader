@@ -1,2 +1,14 @@
 #uturgas-statusbar-dot {
 }
+
+#uturgas-dot-icon {
+  list-style-image: url(chrome://uturgas/skin/red.png);
+}
+
+#uturgas-dot-icon2 {
+  list-style-image: url(chrome://uturgas/skin/yellow.png);
+}
+
+#uturgas-dot-icon3 {
+  list-style-image: url(chrome://uturgas/skin/green.png);
+}
