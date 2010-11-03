@@ -95,6 +95,7 @@ var uturgasUploader = {
 
 var uturgas = {
   theDot: null,
+  menuAdd: null,
   currentPage: null,
   currentUri: null,
   attemptId: null,
@@ -102,6 +103,7 @@ var uturgas = {
   onFirefoxLoad: function(event) {
     this.initialized = true;
     this.theDot = document.getElementById("uturgas-statusbar-dot");
+    this.menuAdd = document.getElementById("uturgas-menu-upload");
 
     this.strings = document.getElementById("uturgas-strings");
     // usage: this.strings.getString("helloMessageTitle")
@@ -117,6 +119,7 @@ var uturgas = {
     this.currentPage = null;
     this.attemptId = null;
     this.theDot.src = "chrome://uturgas/skin/black.png";
+    this.menuAdd.disabled = true;
 
     this.currentUri = aURI;
     var href = aURI.spec;
@@ -163,6 +166,7 @@ var uturgas = {
             self.theDot.src = "chrome://uturgas/skin/green.png";
           else {
             self.theDot.src = "chrome://uturgas/skin/yellow.png";
+            self.menuAdd.disabled = false;
             self.showNotification();
           } 
         }
@@ -178,7 +182,7 @@ var uturgas = {
       label: 'Lisa...',  
       accessKey: 'L',  
       callback: function() {
-        alert("TODO: start upload"); 
+        uturgas.startUpload();
       }  
     }];  
     
@@ -201,6 +205,11 @@ var uturgas = {
     wbp.saveURI(this.currentUri, null, null, null, null, file); 
 
     uturgasUploader.upload(file, this.attemptId);
+  },
+
+  openHelpDialog: function() {
+    var features = "chrome,titlebar,toolbar,centerscreen,modal";
+    window.openDialog("chrome://uturgas/content/help.xul", "Kasutusjuhend", features);
   }
 };
 

@@ -9,20 +9,24 @@
     <stringbundle id="uturgas-strings" src="chrome://uturgas/locale/overlay.properties"/>
   </stringbundleset>
 
-  <dialog id="helpDialog" title="Kasutusjuhend"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    onload="window.sizeToContent();"
-    buttons="accept"
-    buttonlabelaccept="Ok">
-    TODO: kasutusjuhend
-  </dialog>
-
   <statusbar id="status-bar">
     <statusbarpanel 
-        position="5"
-        id="uturgas-statusbar-dot"
-        class="statusbarpanel-iconic" 
-        src="chrome://uturgas/skin/black.png"
-        onclick="uturgas.startUpload();"/>
+      position="5"
+      id="uturgas-statusbar-dot"
+      class="statusbarpanel-iconic" 
+      src="chrome://uturgas/skin/black.png"
+      popup="statusbar-menu"
+      context="statusbar-menu"/>
+
+    <menupopup id="statusbar-menu">
+      <menuitem 
+        id="uturgas-menu-help" 
+        label="Kasutusjuhend" 
+        oncommand="uturgas.openHelpDialog();"/>
+      <menuitem 
+        id="uturgas-menu-upload" 
+        label="Lisa töö..." 
+        oncommand="uturgas.startUpload();"/>
+    </menupopup>
   </statusbar>
 </overlay>
