@@ -14,10 +14,7 @@
         position="5"
         id="uturgas-statusbar-dot"
         class="statusbarpanel-iconic" 
-        onclick="uturgas.startUpload();">
-      <image id="uturgas-dot-icon" tooltiptext="ut.urgas.eu uploader"/>
-      <image id="uturgas-dot-icon2" tooltiptext="ut.urgas.eu uploader"/>
-      <image id="uturgas-dot-icon3" tooltiptext="ut.urgas.eu uploader"/>
-    </statusbarpanel>
+        src="chrome://uturgas/skin/red.png"
+        onclick="uturgas.startUpload();"/>
   </statusbar>
 </overlay>

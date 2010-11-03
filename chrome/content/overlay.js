@@ -19,6 +19,7 @@ var uturgasUrlBarListener = {
 
 var uturgasUploader = {
   uploadURL: "http://localhost:3000/assessments",
+  existsURL: "http://localhost:3000/assessments/exists",
 
   upload: function(file, attemptId) {
     // generate boundary string
@@ -118,15 +119,19 @@ var uturgas = {
   },
 
   onPageChange: function(aURI) {
-    this.currentUri = aURI;
+    // reset variables
+    this.currentPage = null;
+    this.attemptId = null;
+    this.theDot.src = "chrome://uturgas/skin/red.png";
 
+    this.currentUri = aURI;
     var href = aURI.spec;
 
-    var res = href.match(/moodle\.ut\.ee.*review\.php\?q=(\d+)&attempt=(\d+)/);
+    var res = href.match(/moodle\.ut\.ee.*review\.php\?attempt=(\d+)&showall=true/);
     if (res) {
       this.currentPage = "moodle";
-      this.attemptId = res[2];
-      checkAttempt();
+      this.attemptId = res[1];
+      this.checkAttempt();
       return;
     }
 
@@ -134,14 +139,13 @@ var uturgas = {
     if (res) {
       this.currentPage = "webct";
       this.attemptId = res[1];
-      checkAttempt();
+      this.checkAttempt();
       return;
     }
 
     res = href.match(/webct\.e\-uni\.ee/);
     if (res) {
       // TODO: check iframe ?
-      return;
     } 
     
     res = href.match(/google/);
@@ -150,16 +154,24 @@ var uturgas = {
       this.checkAttempt();
       return;
     }
-
-    this.currentPage = null;
-    this.attemptId = null;
   },
 
   checkAttempt: function() {
     if (this.currentPage) {
-      this.theDot.style.color = "yellow";
-    } else {
-      this.theDot.style.color = "black";
+      var self = this;
+      var req = new XMLHttpRequest();
+      var params = "?source=" + this.currentPage + "&attempt_id=" + this.attemptId;
+      req.open("GET", uturgasUploader.existsURL + params, true);
+      req.onreadystatechange = function() {
+        if (req.readyState == 4 && req.status == 200) {
+          var res = eval('(' + req.responseText + ')');
+          if (res.exists)
+            self.theDot.src = "chrome://uturgas/skin/green.png";
+          else
+            self.theDot.src = "chrome://uturgas/skin/yellow.png";
+        }
+      };
+      req.send(null);
     }
   },
 
