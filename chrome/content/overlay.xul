@@ -9,6 +9,14 @@
     <stringbundle id="uturgas-strings" src="chrome://uturgas/locale/overlay.properties"/>
   </stringbundleset>
 
+  <dialog id="helpDialog" title="Kasutusjuhend"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    onload="window.sizeToContent();"
+    buttons="accept"
+    buttonlabelaccept="Ok">
+    TODO: kasutusjuhend
+  </dialog>
+
   <statusbar id="status-bar">
     <statusbarpanel 
         position="5"

@@ -1,8 +1,8 @@
 var uturgasUrlBarListener = {
   QueryInterface: function(aIID) {
-    if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-        aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-        aIID.equals(Components.interfaces.nsISupports))
+    if (aIID.equals(Ci.nsIWebProgressListener) ||
+        aIID.equals(Ci.nsISupportsWeakReference) ||
+        aIID.equals(Ci.nsISupports))
       return this;
     throw Components.results.NS_NOINTERFACE;
   },
@@ -40,9 +40,8 @@ var uturgasUploader = {
     var suffixStringInputStream = this.stringToStream("\r\n" + boundary + "\r\n");
 
     // multiplex the streams together
-    var uploadStream = Components.
-      classes["@mozilla.org/io/multiplex-input-stream;1"].
-      createInstance(Components.interfaces.nsIMultiplexInputStream);
+    var uploadStream = Cc["@mozilla.org/io/multiplex-input-stream;1"].
+      createInstance(Ci.nsIMultiplexInputStream);
     uploadStream.appendStream(prefixStringInputStream);
     uploadStream.appendStream(contentStringInputStream);
     uploadStream.appendStream(suffixStringInputStream);
@@ -58,21 +57,18 @@ var uturgasUploader = {
   // from: http://www.chrisfinke.com/2010/01/30/
   fileToStream: function(file) {
     if (typeof file == "string") {
-      var fpLocal = Components.
-        classes['@mozilla.org/file/local;1'].
-        createInstance(Components.interfaces.nsILocalFile);
+      var fpLocal = Cc['@mozilla.org/file/local;1'].
+        createInstance(Ci.nsILocalFile);
       fpLocal.initWithFile(file);
     } else {
       var fpLocal = file;
     }
 
-    var finStream = Components.
-      classes["@mozilla.org/network/file-input-stream;1"].
-      createInstance(Components.interfaces.nsIFileInputStream);
+    var finStream = Cc["@mozilla.org/network/file-input-stream;1"].
+      createInstance(Ci.nsIFileInputStream);
     finStream.init(fpLocal, 1, 0, false);
-    var bufStream = Components.
-      classes["@mozilla.org/network/buffered-input-stream;1"].
-      createInstance(Components.interfaces.nsIBufferedInputStream);
+    var bufStream = Cc["@mozilla.org/network/buffered-input-stream;1"].
+      createInstance(Ci.nsIBufferedInputStream);
     bufStream.init(finStream, 9000000);
     return bufStream;
   },
@@ -81,9 +77,8 @@ var uturgasUploader = {
   stringToStream: function(str) {
     function encodeToUtf8(oStr) {
       var utfStr = oStr;
-      var uConv = Components.
-        classes["@mozilla.org/intl/scriptableunicodeconverter"].
-        createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+      var uConv = Cc["@mozilla.org/intl/scriptableunicodeconverter"].
+        createInstance(Ci.nsIScriptableUnicodeConverter);
       uConv.charset = "UTF-8";
       utfStr = uConv.ConvertFromUnicode(oStr);
 
@@ -91,9 +86,8 @@ var uturgasUploader = {
     }
     
     str = encodeToUtf8(str);
-    var stream = Components.
-      classes["@mozilla.org/io/string-input-stream;1"].
-      createInstance(Components.interfaces.nsIStringInputStream);
+    var stream = Cc["@mozilla.org/io/string-input-stream;1"].
+      createInstance(Ci.nsIStringInputStream);
     stream.setData(str, str.length);
     return stream;
   }
@@ -114,7 +108,7 @@ var uturgas = {
 
     gBrowser.addProgressListener(
       uturgasUrlBarListener, 
-      Components.interfaces.nsIWebProgress.NOTIFY_LOCATION
+      Ci.nsIWebProgress.NOTIFY_LOCATION
     );
   },
 
@@ -167,17 +161,35 @@ var uturgas = {
           var res = eval('(' + req.responseText + ')');
           if (res.exists)
             self.theDot.src = "chrome://uturgas/skin/green.png";
-          else
+          else {
             self.theDot.src = "chrome://uturgas/skin/yellow.png";
+            self.showNotification();
+          } 
         }
       };
       req.send(null);
     }
   },
 
+  showNotification: function() {
+    var message = "Soovid lisada selle töö urka kataloogi?";  
+    var nb = gBrowser.getNotificationBox();
+    var buttons = [{  
+      label: 'Lisa...',  
+      accessKey: 'L',  
+      callback: function() {
+        alert("TODO: start upload"); 
+      }  
+    }];  
+    
+    const priority = nb.PRIORITY_WARNING_MEDIUM;  
+    nb.appendNotification(
+      message, 'new-uturgas-assessment',
+      'chrome://browser/skin/Info.png', priority, buttons
+    );    
+  },
+
   startUpload: function() {
-    var Cc = Components.classes;
-    var Ci = Components.interfaces;
     var file = Cc["@mozilla.org/file/local;1"].
       createInstance(Ci.nsILocalFile);  
     file.initWithPath("/tmp/ut-urgas-eu-test.html");  
