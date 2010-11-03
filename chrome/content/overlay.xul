@@ -14,7 +14,7 @@
         position="5"
         id="uturgas-statusbar-dot"
         class="statusbarpanel-iconic" 
-        src="chrome://uturgas/skin/red.png"
+        src="chrome://uturgas/skin/black.png"
         onclick="uturgas.startUpload();"/>
   </statusbar>
 </overlay>

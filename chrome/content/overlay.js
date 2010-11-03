@@ -122,7 +122,7 @@ var uturgas = {
     // reset variables
     this.currentPage = null;
     this.attemptId = null;
-    this.theDot.src = "chrome://uturgas/skin/red.png";
+    this.theDot.src = "chrome://uturgas/skin/black.png";
 
     this.currentUri = aURI;
     var href = aURI.spec;
