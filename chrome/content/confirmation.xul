@@ -4,15 +4,17 @@
 <!DOCTYPE confirmationwindow SYSTEM "chrome://uturgas/locale/confirmationwindow.dtd">
 
 <dialog id="uturgasConfirmation" title="Töö atribuudid"
-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  onload="window.sizeToContent();"
-  buttons="accept"
-  buttonlabelaccept="Kinnita">
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    onload="window.sizeToContent();"
+    buttons="accept"
+    buttonlabelaccept="Kinnita"
+    ondialogaccept="return uturgasUploader.sendConfirmation();">
+  <script src="overlay.js"/>
 
   <label control="assessment_title" value="Tiitel"/>
   <textbox id="assessment_title"/>
   
-  <label control="assessment_category" value="Kategooria"/>
+  <label control="assessment_category" value="Aine nimi"/>
   <textbox id="assessment_category"/>
 
   <label control="assessment_author" value="Autor"/>
@@ -20,11 +22,11 @@
 
   <script type="text/javascript">
     var title = document.getElementById("assessment_title");
-    if (window.arguments[0])
-      title.value = window.arguments[0];
-
-    var category = document.getElementById("assessment_title");
     if (window.arguments[1])
-      category.value = window.arguments[1];
+      title.value = window.arguments[1];
+
+    var category = document.getElementById("assessment_category");
+    if (window.arguments[2])
+      category.value = window.arguments[2];
   </script>
 </dialog>

@@ -42,12 +42,36 @@ var uturgasUploader = {
           "chrome://uturgas/content/confirmation.xul", 
           "Töö atribuudid", 
           features,
+          res.assessment.id,
           res.assessment.title,
-          res.assessment.category
+          res.assessment.category_name
         );      
       }
     };
     req.send(postRequest.requestBody);
+  },
+
+  sendConfirmation: function() {
+    var id = window.arguments[0];
+    var params = 
+      "assessment[title]=" + document.getElementById("assessment_title").value + 
+      "&assessment[category_name]=" + document.getElementById("assessment_category").value + 
+      "&assessment[author]=" + document.getElementById("assessment_author").value;
+
+    var req = new XMLHttpRequest();
+    req.open("PUT", this.uploadURL + "/" + id);
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    req.setRequestHeader("Content-Length", params.length);
+    req.onreadystatechange = function() {
+      if (req.readyState == 4 && req.status == 200) {
+        var res = eval('(' + req.responseText + ')');
+        uturgas.theDot.src = "chrome://uturgas/skin/green.png";
+        uturgas.menuAdd.disabled = false;
+      }
+    };
+    req.send(params);
+
+    return true;
   }
 }
 
@@ -102,13 +126,6 @@ var uturgas = {
     if (res) {
       // TODO: check iframe ?
     } 
-    
-    res = href.match(/google/);
-    if (res) {
-      this.currentPage = "google"; // this is temporary just for testing
-      this.checkAttempt();
-      return;
-    }
   },
 
   checkAttempt: function() {
@@ -159,6 +176,7 @@ var uturgas = {
     file.append("ut-urgas-eu-" + this.currentPage + "-" + this.attemptId + ".html");
     file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0666);  
     
+    var self = this;
     var wbp = Cc['@mozilla.org/embedding/browser/nsWebBrowserPersist;1'].
       createInstance(Ci.nsIWebBrowserPersist);
     wbp.persistFlags &= ~Ci.nsIWebBrowserPersist.PERSIST_FLAGS_NO_CONVERSION;
@@ -168,7 +186,7 @@ var uturgas = {
       },
       onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus, aDownload) {
         if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)
-          uturgasUploader.upload(file, this.attemptId);
+          uturgasUploader.upload(file, self.attemptId);
       }
     };
     wbp.saveURI(this.currentUri, null, null, null, null, file); 
