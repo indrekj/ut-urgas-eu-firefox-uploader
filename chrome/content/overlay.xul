@@ -19,6 +19,10 @@
       context="statusbar-menu"/>
 
     <menupopup id="statusbar-menu">
+      <menuitem
+        id="uturgas-homepage"
+        label="http://ut.urgas.eu/"
+        oncommand="gBrowser.selectedTab = gBrowser.addTab('http://ut.urgas.eu/');"/>
       <menuitem 
         id="uturgas-menu-help" 
         label="Kasutusjuhend" 

@@ -1,2 +1,15 @@
 #uturgas-statusbar-dot {
 }
+
+#uturgasHelp groupbox {
+  width: 400px;
+}
+
+#uturgasHelp caption {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#uturgasHelp label {
+  font-weight: bold;
+}

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://uturgas/skin/overlay.css" type="text/css"?>
 <!DOCTYPE helpwindow SYSTEM "chrome://uturgas/locale/helpwindow.dtd">
 
@@ -8,5 +8,42 @@
   onload="window.sizeToContent();"
   buttons="accept"
   buttonlabelaccept="Ok">
-  TODO: kasutusjuhend
+
+  <vbox flex="1">
+    <groupbox>
+      <caption>Mõte</caption>
+      <description>Selle extensioni mõte on lihtsustada tööde lisamist ut.urgas.eu lehele. Selle asemel, et salvestada töö arvutisse ja siis eraldi uploadima hakkata, pakub see extension vastava lehe puhul võimaluse töö koheselt lisada ilma lehelt lahkumiseta.</description>
+    </groupbox>
+
+    <spacer width="20"/>
+
+    <groupbox>
+      <caption>Logo värvid</caption>
+
+      <label value="Must:"/>
+      <description>Miskit ei toimu</description>
+
+      <label value="Oranž:"/>
+      <description>Antud tööd meie andmebaasist ei leitud. Vajuta ikoonile, et töö lisada.</description>
+
+      <label value="Roheline:"/>
+      <description>Töö on juba meie andmebaasis olemas.</description>
+    </groupbox>
+
+    <spacer width="20"/>
+
+    <groupbox>
+      <caption>Alpha</caption>
+
+      <description>See extension on alles alpha versioonis. Kui leiate mõne vea siis andke sellest teada #it08@irc.ircworld.org kanalis.</description>
+      <description>Hetkel on ainult Moodle toetatud.</description>
+    </groupbox>
+
+    <spacer width="20"/>
+
+    <groupbox>
+      <caption>Moto</caption>
+      <description>Ärme igast lollust lisa :)</description>
+    </groupbox>
+  </vbox>
 </dialog>
