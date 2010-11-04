@@ -18,8 +18,8 @@ var uturgasUrlBarListener = {
 };
 
 var uturgasUploader = {
-  uploadURL: "http://localhost:3000/assessments",
-  existsURL: "http://localhost:3000/assessments/exists",
+  uploadURL: "http://ut.urgas.eu/assessments",
+  existsURL: "http://ut.urgas.eu/assessments/exists",
 
   upload: function(file, attemptId) {
     var postRequest = createPostRequest({
