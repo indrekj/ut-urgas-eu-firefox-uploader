@@ -167,10 +167,8 @@ var uturgas = {
           aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress, aDownload) {
       },
       onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus, aDownload) {
-        alert(aStatus);
-        if (aStatus & Components.interfaces.nsIWebProgressListener.STATE_STOP)
-          alert("stop");
-          //uturgasUploader.upload(file, this.attemptId);
+        if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)
+          uturgasUploader.upload(file, this.attemptId);
       }
     };
     wbp.saveURI(this.currentUri, null, null, null, null, file); 
