@@ -18,8 +18,8 @@ var uturgasUrlBarListener = {
 };
 
 var uturgasPrefs = {
-  prefs: Cc["@mozilla.org/preferences-service;1"].
-      getService(Ci.nsIPrefService).
+  prefs: Components.classes["@mozilla.org/preferences-service;1"].
+      getService(Components.interfaces.nsIPrefService).
       getBranch("extensions.uturgas."),
 
   getHost: function() {
@@ -59,6 +59,9 @@ var uturgasUploader = {
           res.assessment.title,
           res.assessment.category_name
         );      
+        // this is executed when the dialog is closed
+        uturgasAttempts.changeCurrentAttemptExistsStatusTo(true);
+        uturgas.updatePage();
       }
     };
     req.send(postRequest.requestBody);
@@ -77,14 +80,45 @@ var uturgasUploader = {
     req.setRequestHeader("Content-Length", params.length);
     req.onreadystatechange = function() {
       if (req.readyState == 4 && req.status == 200) {
-        var res = eval('(' + req.responseText + ')');
-        uturgas.theDot.src = "chrome://uturgas/skin/green.png";
-        uturgas.menuAdd.disabled = false;
+        window.close();
       }
     };
     req.send(params);
+    return false;
+  }
+}
 
-    return true;
+var uturgasAttempts = {
+  currentId: null,
+  cached: [],
+
+  add: function(id, exists) {
+    var i = this.getAttemptArrayIdFor(id);
+    if (i == null) {
+      this.cached.push([id, exists]);
+    } else {
+      this.cached[i] = [id, exists];
+    }
+  },
+
+  changeCurrentAttemptExistsStatusTo: function(exists) {
+    this.add(this.currentId, exists);
+  },
+
+  currentAttemptExists: function() {
+    var i = this.getAttemptArrayIdFor(this.currentId);
+    if (i == null)
+      return null;
+    return this.cached[i][1];
+  },
+
+  getAttemptArrayIdFor: function(id) {
+    for (var i = 0; i < this.cached.length; i++) {
+      if (this.cached[i][0] == id) {
+        return i;
+      }
+    }
+    return null;
   }
 }
 
@@ -93,7 +127,6 @@ var uturgas = {
   menuAdd: null,
   currentPage: null,
   currentUri: null,
-  attemptId: null,
 
   onFirefoxLoad: function(event) {
     this.initialized = true;
@@ -111,27 +144,28 @@ var uturgas = {
 
   onPageChange: function(aURI) {
     // reset variables
+    uturgasAttempts.attemptId = null;
     this.currentPage = null;
-    this.attemptId = null;
     this.theDot.src = "chrome://uturgas/skin/black.png";
     this.menuAdd.disabled = true;
     this.currentUri = aURI;
 
+    if (!aURI) return;
     var href = aURI.spec;
 
     var res = href.match(/moodle\.ut\.ee.*review\.php\?attempt=(\d+)&showall=true/);
     if (res) {
+      uturgasAttempts.currentId = res[1];
       this.currentPage = "moodle";
-      this.attemptId = res[1];
-      this.checkAttempt();
+      this.updatePage();
       return;
     }
 
     res = href.match(/webct\.e\-uni\.ee.*attempt=(\d+)/);
     if (res) {
+      uturgasAttempts.currentId = res[1];
       this.currentPage = "webct";
-      this.attemptId = res[1];
-      this.checkAttempt();
+      this.updatePage();
       return;
     }
 
@@ -141,25 +175,32 @@ var uturgas = {
     } 
   },
 
-  checkAttempt: function() {
-    if (this.currentPage) {
+  updatePage: function() {
+    if (!this.currentPage) return;
+    
+    var exists = uturgasAttempts.currentAttemptExists();
+    if (exists == null) {
       var self = this;
       var req = new XMLHttpRequest();
-      var params = "?source=" + this.currentPage + "&attempt_id=" + this.attemptId;
+      var params = "?source=" + this.currentPage + "&attempt_id=" + uturgasAttempts.currentId;
       req.open("GET", uturgasUploader.existsURL + params, true);
       req.onreadystatechange = function() {
         if (req.readyState == 4 && req.status == 200) {
           var res = eval('(' + req.responseText + ')');
-          if (res.exists)
-            self.theDot.src = "chrome://uturgas/skin/green.png";
-          else {
-            self.theDot.src = "chrome://uturgas/skin/yellow.png";
-            self.menuAdd.disabled = false;
-            self.showNotification();
-          } 
+          uturgasAttempts.changeCurrentAttemptExistsStatusTo(res.exists);
+          self.updatePage();
         }
       };
       req.send(null);
+      return;
+    };
+
+    if (exists) {
+      this.theDot.src = "chrome://uturgas/skin/green.png";
+    } else {
+      this.theDot.src = "chrome://uturgas/skin/yellow.png";
+      this.menuAdd.disabled = false;
+      this.showNotification();
     }
   },
 
@@ -189,7 +230,7 @@ var uturgas = {
       getService(Ci.nsIProperties).  
       get("TmpD", Ci.nsIFile);  
 
-    file.append("ut-urgas-eu-" + this.currentPage + "-" + this.attemptId + ".html");
+    file.append("ut-urgas-eu-" + this.currentPage + "-" + uturgasAttempts.currentId + ".html");
     file.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0666);  
     
     var self = this;
@@ -202,7 +243,7 @@ var uturgas = {
       },
       onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus, aDownload) {
         if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP)
-          uturgasUploader.upload(file, self.attemptId);
+          uturgasUploader.upload(file, uturgasAttempts.currentId);
       }
     };
     wbp.saveURI(this.currentUri, null, null, null, null, file); 
