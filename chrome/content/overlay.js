@@ -151,8 +151,11 @@ var uturgas = {
   },
 
   showNotification: function() {
-    var message = "Soovid lisada selle töö urka kataloogi?";  
     var nb = gBrowser.getNotificationBox();
+    if (nb.currentNotification != null)
+      return;
+    
+    var message = "Soovid lisada selle töö urka kataloogi?";  
     var buttons = [{  
       label: 'Lisa...',  
       accessKey: 'L',  
@@ -163,8 +166,8 @@ var uturgas = {
     
     const priority = nb.PRIORITY_WARNING_MEDIUM;  
     nb.appendNotification(
-      message, 'new-uturgas-assessment',
-      'chrome://browser/skin/Info.png', priority, buttons
+      message, "new-uturgas-assessment",
+      "chrome://browser/skin/Info.png", priority, buttons
     );    
   },
 
