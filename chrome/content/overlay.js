@@ -167,7 +167,7 @@ var uturgas = {
     const priority = nb.PRIORITY_WARNING_MEDIUM;  
     nb.appendNotification(
       message, "new-uturgas-assessment",
-      "chrome://browser/skin/Info.png", priority, buttons
+      "chrome://uturgas/skin/black.png", priority, buttons
     );    
   },
 
