@@ -23,10 +23,9 @@ var uturgasPrefs = {
       getBranch("extensions.uturgas."),
 
   getHost: function() {
-    var host = this.prefs.getCharPref("host");
-    if (!host)
-      host = "http://ut.urgas.eu";
-    return host;
+    if (this.prefs.prefHasUserValue("host"))
+      return this.prefs.getCharPref("host");
+    return "http://ut.urgas.eu";
   }
 };
 
