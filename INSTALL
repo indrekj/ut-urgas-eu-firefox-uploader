@@ -1,0 +1,4 @@
+Development:
+  Open your firefoxProfile/prefs.js and add:
+    user_pref("extensions.uturgas.host", "http://localhost:3000");
+  Otherwise you are testing it with the real server and that's bad.

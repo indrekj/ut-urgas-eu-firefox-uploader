@@ -17,9 +17,22 @@ var uturgasUrlBarListener = {
   onSecurityChange: function(a, b, c) {}
 };
 
+var uturgasPrefs = {
+  prefs: Cc["@mozilla.org/preferences-service;1"].
+      getService(Ci.nsIPrefService).
+      getBranch("extensions.uturgas."),
+
+  getHost: function() {
+    var host = this.prefs.getCharPref("host");
+    if (!host)
+      host = "http://ut.urgas.eu";
+    return host;
+  }
+};
+
 var uturgasUploader = {
-  uploadURL: "http://ut.urgas.eu/assessments",
-  existsURL: "http://ut.urgas.eu/assessments/exists",
+  uploadURL: uturgasPrefs.getHost() + "/assessments",
+  existsURL: uturgasPrefs.getHost() + "/assessments/exists",
 
   upload: function(file, attemptId) {
     var postRequest = createPostRequest({
