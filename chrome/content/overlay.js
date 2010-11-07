@@ -165,13 +165,7 @@ var uturgas = {
       uturgasAttempts.currentId = res[1];
       this.currentPage = "webct";
       this.updatePage();
-      return;
     }
-
-    res = href.match(/webct\.e\-uni\.ee/);
-    if (res) {
-      // TODO: check iframe ?
-    } 
   },
 
   updatePage: function() {
