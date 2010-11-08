@@ -15,10 +15,10 @@
       id="uturgas-statusbar-dot"
       class="statusbarpanel-iconic" 
       src="chrome://uturgas/skin/black.png"
-      popup="statusbar-menu"
-      context="statusbar-menu"/>
+      popup="uturgas-statusbar-menu"
+      context="uturgas-statusbar-menu"/>
 
-    <menupopup id="statusbar-menu">
+    <menupopup id="uturgas-statusbar-menu">
       <menuitem
         id="uturgas-homepage"
         label="http://ut.urgas.eu/"
